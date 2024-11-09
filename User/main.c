@@ -12,7 +12,7 @@ static uint8_t update_clock = 0;
 
 void systick_init(void)
 {
-    SysTick->CMP = (SystemCoreClock / 500) - 1;    // we want a 1024Hz interrupt
+    SysTick->CMP = (SystemCoreClock / 600) - 1;    // we want a 1024Hz interrupt
     SysTick->CNT = 0;                               // clear counter
     SysTick->CTLR = 0xF;                            // start counter in /1 mode, enable interrupts, auto-reset counter
     SysTick->SR = 0;                                // clear count comparison flag
