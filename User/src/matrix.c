@@ -61,6 +61,8 @@ static const uint8_t sec_map[7][2] = {
 
 static uint8_t matrix_col = 0;        // actively displayed matrix column
 
+uint16_t wakeup_timer;
+
 
 struct MatrixTime {
     uint8_t h;
@@ -197,7 +199,10 @@ uint8_t matrix_next()
     }
 
     // enable active column (active low)
-    mcol[matrix_col].port->BCR = (1 << mcol[matrix_col].pin);
+    if (wakeup_timer) {
+        wakeup_timer--;
+        mcol[matrix_col].port->BCR = (1 << mcol[matrix_col].pin);
+    }
 
     return matrix_col;
 }

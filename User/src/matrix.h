@@ -19,6 +19,10 @@
 
 
 
+extern uint16_t wakeup_timer;
+
+
+
 void matrix_init();
 uint8_t matrix_next();
 void matrix_gettime();

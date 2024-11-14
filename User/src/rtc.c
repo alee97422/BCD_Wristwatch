@@ -80,7 +80,7 @@ uint8_t RTC_Init(void)
     RTC_EnterConfigMode();
     RTC_SetPrescaler(32767);
     RTC_WaitForLastTask();
-    RTC_Set(2024, 10, 8, 13, 58, 55); /* Setup Time */
+    RTC_Set(2024, 10, 8, 0, 0, 00);    /* Setup Time UPDATE: changed on 11-9 from 22:16:00 on time only also accidently reset on 11-10 14:04:30 */
     RTC_ExitConfigMode();
     BKP_WriteBackupRegister(BKP_DR1, 0XA1A1);
 
