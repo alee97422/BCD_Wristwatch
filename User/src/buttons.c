@@ -52,48 +52,61 @@ void btn_init()
 
 void btn_process()
 {
+    int any_button_pressed = 0;
+
     // is wkup pushed?
     if (!(BTN_PORT->INDR & BTN0_BIT)) {
         btn_pushed |= BTN0_BIT;
-
-        wakeup_timer = WAKEUP_TIME_DEFAULT;
+        any_button_pressed = 1;
     } else {
         btn_pushed &= ~BTN0_BIT;
     }
+    if (!(BTN_PORT->INDR & BTN0_BIT)) {
+            btn_pushed |= BTN0_BIT;
+            any_button_pressed = 1;
+        } else {
+            btn_pushed &= ~BTN0_BIT;
+        }
 
-    if (wakeup_timer) {
-        // is HOURS pushed?
-        if (!(BTN_PORT->INDR & BTN1_BIT)) {
-            if (!(btn_pushed & BTN1_BIT)) {
+    // is HOURS pushed?
+    if (!(BTN_PORT->INDR & BTN1_BIT)) {
+        if (!(btn_pushed & BTN1_BIT)) {
+            btn_pushed |= BTN1_BIT;
+            if (wakeup_timer) {
                 RTC_Get();
-
                 rtclock.hour++;
                 if (rtclock.hour >= 24)
                     rtclock.hour = 0;
 
                 RTC_Set(2024, 1, 1, rtclock.hour, rtclock.min, rtclock.sec);
-
-                btn_pushed |= BTN1_BIT;
             }
-        } else {
-            btn_pushed &= ~BTN1_BIT;
         }
+        any_button_pressed = 1;
+    } else {
+        btn_pushed &= ~BTN1_BIT;
+    }
 
-        // is HOURS pushed?
-        if (!(BTN_PORT->INDR & BTN2_BIT)) {
-            if (!(btn_pushed & BTN2_BIT)) {
+    // is MIN pushed?
+    if (!(BTN_PORT->INDR & BTN2_BIT)) {
+        if (!(btn_pushed & BTN2_BIT)) {
+            btn_pushed |= BTN2_BIT;
+            if (wakeup_timer) {
                 RTC_Get();
-
                 rtclock.min++;
                 if (rtclock.min >= 60)
                     rtclock.min = 0;
 
                 RTC_Set(2024, 1, 1, rtclock.hour, rtclock.min, rtclock.sec);
-
-                btn_pushed |= BTN2_BIT;
             }
-        } else {
-            btn_pushed &= ~BTN2_BIT;
         }
+        any_button_pressed = 1;
+    } else {
+        btn_pushed &= ~BTN2_BIT;
+    }
+
+    // Set wakeup timer if any button is pressed
+    if (any_button_pressed) {
+        wakeup_timer = WAKEUP_TIME_DEFAULT;
     }
 }
+
