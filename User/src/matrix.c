@@ -129,11 +129,11 @@ static void matrix_set_pingroup_out(const struct OutPin *outp, uint8_t count, ui
 void matrix_init()
 {
     // we're not using mrow_hi for now, so set as floating input (CFGxR 0x4, 0b0100)
-    matrix_set_pingroup_dir(mrow_hi, MATRIX_ROWS, 0x4);
+    matrix_set_pingroup_dir(mrow_lo, MATRIX_ROWS, 0x4);
 
     // configure cols, mrow_lo as high (disabled) 2MHz push/pull outputs (CFGxR 0x2, 0b0010)
-    matrix_set_pingroup_out(mrow_lo, MATRIX_ROWS, 1);
-    matrix_set_pingroup_dir(mrow_lo, MATRIX_ROWS, 0x2);
+    matrix_set_pingroup_out(mrow_hi, MATRIX_ROWS, 1);
+    matrix_set_pingroup_dir(mrow_hi, MATRIX_ROWS, 0x2);
 
     matrix_set_pingroup_out(mcol,    MATRIX_COLS, 1);
     matrix_set_pingroup_dir(mcol,    MATRIX_COLS, 0x2);
@@ -152,7 +152,7 @@ uint8_t matrix_next()
 
     // turn off all columns and rows
     matrix_set_pingroup_out(mcol,    MATRIX_COLS, 1);
-    matrix_set_pingroup_out(mrow_lo, MATRIX_COLS, 1);
+    matrix_set_pingroup_out(mrow_hi, MATRIX_COLS, 1);
 
     // next column
     matrix_col++;
@@ -169,7 +169,7 @@ uint8_t matrix_next()
     bits = matime.h_tens << 4 | matime.h_ones;
     for (i = 0; i < sizeof(hour_map) / sizeof(hour_map[0]); i++) {
         if (matrix_col == hour_map[i][0]) {
-            outp = (OutPin *)&mrow_lo[hour_map[i][1]];
+            outp = (OutPin *)&mrow_hi[hour_map[i][1]];
             if (bits & 1) outp->port->BCR  = (1 << outp->pin);
             else          outp->port->BSHR = (1 << outp->pin);
         }
@@ -180,7 +180,7 @@ uint8_t matrix_next()
     bits = matime.m_tens << 4 | matime.m_ones;
     for (i = 0; i < sizeof(min_map) / sizeof(min_map[0]); i++) {
         if (matrix_col == min_map[i][0]) {
-            outp = (OutPin *)&mrow_lo[min_map[i][1]];
+            outp = (OutPin *)&mrow_hi[min_map[i][1]];
             if (bits & 1) outp->port->BCR  = (1 << outp->pin);
             else          outp->port->BSHR = (1 << outp->pin);
         }
@@ -191,7 +191,7 @@ uint8_t matrix_next()
     bits = matime.s_tens << 4 | matime.s_ones;
     for (i = 0; i < sizeof(sec_map) / sizeof(sec_map[0]); i++) {
         if (matrix_col == sec_map[i][0]) {
-            outp = (OutPin *)&mrow_lo[sec_map[i][1]];
+            outp = (OutPin *)&mrow_hi[sec_map[i][1]];
             if (bits & 1) outp->port->BCR  = (1 << outp->pin);
             else          outp->port->BSHR = (1 << outp->pin);
         }
